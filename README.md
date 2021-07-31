@@ -4,8 +4,8 @@
 
   * [SANS Infocon](https://isc.sans.edu/infocon.html)
   * [IBM X-Force Alertcon](https://exchange.xforce.ibmcloud.com/)
-  * [Symantec Threatcon](https://www.symantec.com/security_response/threatcon/)
-  * [AVG internet Risk Level](https://www.avg.com/en-us/about-viruses)
+  * ~[Symantec Threatcon](https://www.symantec.com/security_response/threatcon/)~
+  * ~[AVG internet Risk Level](https://www.avg.com/en-us/about-viruses)~
   * [Ahnlab Security Risk Level](https://global.ahnlab.com/site/securitycenter/securitycenterMain.do)
   * [MS-ISAC Alert Level](https://www.cisecurity.org/cybersecurity-threats/)
   * [SecurityWizardry.com Overall Alert](https://www.securitywizardry.com/the-radar-page/overall-alerts)
