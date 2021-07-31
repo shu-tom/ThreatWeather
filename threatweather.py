@@ -8,6 +8,7 @@
 import os
 import re
 import sys
+import ssl
 import json
 import datetime
 import argparse
@@ -33,10 +34,8 @@ parser.add_argument("-s", "--sans", action="store_true", default=False,
                     help="Check SANS Infocon.")
 parser.add_argument("-x", "--xforce", action="store_true", default=False,
                     help="Check IBM X-Force Alertcon.")
-parser.add_argument("-t", "--threatcon", action="store_true", default=False,
-                    help="Check Symantec Threatcon.")
-parser.add_argument("-av", "--avg", action="store_true", default=False,
-                    help="Check AVG internet risk level.")
+#parser.add_argument("-t", "--threatcon", action="store_true", default=False,
+#                    help="Check Symantec Threatcon.")
 parser.add_argument("-ah", "--ahnlab", action="store_true", default=False,
                     help="Check Ahnlab Security Risk Level.")
 parser.add_argument("-m", "--msisac", action="store_true", default=False,
@@ -127,10 +126,8 @@ STR_INFO = {
                   "SANS Infocon", "https://isc.sans.edu/infocon.html"],
     "xforce":    [ALERTCON_COLOR, "https://exchange.xforce.ibmcloud.com/api/alertcon",
                   "IBM X-Force Alertcon", "https://exchange.xforce.ibmcloud.com/"],
-    "threatcon": [THREATCON_COLOR, "https://www.symantec.com/security_response/threatcon/",
-                  "Symantec Threatcon", "https://www.symantec.com/security_response/threatcon/"],
-    "avg":       [AVG_COLOR, "https://www.avg.com/en-us/about-viruses",
-                  "AVG internet risk level", "https://www.avg.com/en-us/about-viruses"],
+    #"threatcon": [THREATCON_COLOR, "https://www.symantec.com/security_response/threatcon/",
+    #              "Symantec Threatcon", "https://www.symantec.com/security_response/threatcon/"],
     "ahnlab":    [AHNLAB_COLOR, "https://global.ahnlab.com/site/securitycenter/securitycenterMain.do",
                   "Ahnlab Security Risk Level", "https://global.ahnlab.com/site/securitycenter/securitycenterMain.do"],
     "msisac":    [MSISAC_COLOR, "https://www.cisecurity.org/cybersecurity-threats/",
@@ -185,7 +182,7 @@ def get_content(url):
     try:
         headers = {"User-Agent":  USER_AGENT}
         req = urllib.request.Request(url, None, headers)
-        response = urllib.request.urlopen(req)
+        response = urllib.request.urlopen(req, context=ssl._create_unverified_context())
         data = response.read()
         response.close()
     except urllib.error.HTTPError as e:
@@ -259,36 +256,20 @@ def main():
         if args.logs:
             save_log("xforce", status)
 
-    if args.threatcon or args.force:
-        sig = STR_INFO["threatcon"]
-        data = get_html(sig[1])
-        if data:
-            html = data.find_all("img", class_="imgMrgnRgtLG")
-            for a in html:
-                status = a.get("src").split("/")[5].replace("threatcon-", "").replace(".png", "")
-            print_color(sig[2], sig[0], status)
-
-        if args.tweet:
-            post_tweet("threatcon", sig, status)
-
-        if args.logs:
-            save_log("threatcon", status)
-
-    if args.avg or args.force:
-        sig = STR_INFO["avg"]
-        data = get_html(sig[1])
-        if data:
-            html = data.find_all("img", alt=re.compile("Threatometer"))
-            for a in html:
-                index = a.get("src").split("/")[5].replace("risklevel_avg9_", "").replace("_en.png", "")
-            status = list(AVG_COLOR.items())[int(index) - 1][0]
-            print_color(sig[2], sig[0], status)
-
-        if args.tweet:
-            post_tweet("avg", sig, status)
-
-        if args.logs:
-            save_log("avg", status)
+#    if args.threatcon or args.force:
+#        sig = STR_INFO["threatcon"]
+#        data = get_html(sig[1])
+#        if data:
+#            html = data.find_all("img", class_="imgMrgnRgtLG")
+#            for a in html:
+#                status = a.get("src").split("/")[5].replace("threatcon-", "").replace(".png", "")
+#            print_color(sig[2], sig[0], status)
+#
+#        if args.tweet:
+#            post_tweet("threatcon", sig, status)
+#
+#        if args.logs:
+#            save_log("threatcon", status)
 
     if args.ahnlab or args.force:
         sig = STR_INFO["ahnlab"]
